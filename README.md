@@ -4,7 +4,7 @@
 
 > OpenDeepCrew 的 atom 市场模板仓库。Fork 后即可创建自己团队的插件市场。
 
-Atom 市场是 [OpenDeepCrew](https://github.com/open-deep-clew/opendeepcrew) 的插件源。将 commands、agents、skills、hooks 作为**原子（atoms）**管理，通过 plugins 自由组合成工作流。
+Atom 市场是 [OpenDeepCrew](https://github.com/open-deep-crew/opendeepcrew) 的插件源。将 commands、agents、skills、hooks 作为**原子（atoms）**管理，通过 plugins 自由组合成工作流。
 
 - **原子复用**：同一个 atom 可被多个 plugin 引用，改一处全部生效
 - **自由组合**：不同 plugin 按需组合 atoms，定义特定工作流
@@ -34,7 +34,7 @@ marketplace/
 在 GitHub 上 Fork 本仓库，或者：
 
 ```bash
-git clone https://github.com/open-deep-clew/marketplace.git my-marketplace
+git clone https://github.com/open-deep-crew/marketplace.git my-marketplace
 cd my-marketplace
 rm -rf .git && git init
 ```
@@ -213,9 +213,9 @@ MARKETPLACE_SOURCE=https://github.com/your-org/my-marketplace.git
 
 | 项目 | 说明 |
 |------|------|
-| [opendeepcrew](https://github.com/open-deep-clew/opendeepcrew) | AI agent 团队编排服务器，消费本市场 |
-| [acpx](https://github.com/open-deep-clew/acpx) | Agent Client Protocol 的 headless CLI 客户端 |
-| [acpx-teams](https://github.com/open-deep-clew/acpx-teams-mcp) | agent 团队协调的 MCP server |
+| [opendeepcrew](https://github.com/open-deep-crew/opendeepcrew) | AI agent 团队编排服务器，消费本市场 |
+| [acpx](https://github.com/open-deep-crew/acpx) | Agent Client Protocol 的 headless CLI 客户端 |
+| [acpx-teams](https://github.com/open-deep-crew/acpx-teams-mcp) | agent 团队协调的 MCP server |
 
 ## License
 
