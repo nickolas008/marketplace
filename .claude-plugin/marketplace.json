@@ -59,12 +59,14 @@
       "category": "default",
       "commands": [],
       "skills": [
-        "./atoms/skills/skill-creator",
         "./atoms/skills/agent-creator",
-        "./atoms/skills/opendeepcrew-cli"
+        "./atoms/skills/odc-cli",
+        "./atoms/skills/skill-creator"
       ],
       "hooks": [],
-      "agents": [],
+      "agents": [
+        "./atoms/agents/default-bot.md"
+      ],
       "mcpServers": {}
     },
     {
