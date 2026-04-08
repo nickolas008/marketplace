@@ -106,6 +106,31 @@
           "disabled": false
         }
       }
+    },
+    {
+      "name": "nick-test",
+      "description": "nick-test description",
+      "category": "development",
+      "commands": [],
+      "skills": [
+        "./atoms/skills/brainstorming",
+        "./atoms/skills/executing-plans",
+        "./atoms/skills/writing-plans",
+        "./atoms/skills/git-workspace-init"
+      ],
+      "hooks": [],
+      "agents": [
+        "./atoms/agents/superpowers-dev.md"
+      ],
+      "mcpServers": {
+        "claude-teams": {
+          "command": "uvx",
+          "args": [
+            "acpx-teams"
+          ],
+          "disabled": false
+        }
+      }
     }
   ]
 }
