@@ -39,8 +39,8 @@ CDCU MCU基于AUTOSAR架构，具备以下标准能力：
 - `系统需求` 列（待填充）
 
 #### 选项B: 图片处理
-使用pdf技能从需求图片中提取文字：
-1. 调用pdf技能进行OCR文字提取
+使用paddleocr-doc-parsing技能从需求图片中提取文字：
+1. 调用paddleocr-doc-parsing技能进行OCR文字提取
 2. 解析提取的文字以识别需求描述
 3. 将文字作为CSV内容进行处理
 
@@ -169,7 +169,7 @@ CDCU MCU基于AUTOSAR架构，具备以下标准能力：
 4. 写入包含填充的`系统需求`列的输出CSV
 
 ### 对于图片：
-1. 使用pdf技能通过OCR提取文字
+1. 使用paddleocr-doc-parsing技能通过OCR提取文字
 2. 解析并识别需求描述
 3. 使用4功能工作流处理
 4. 生成包含结果的输出CSV
@@ -243,4 +243,4 @@ CDCU MCU基于AUTOSAR架构，具备以下标准能力：
 ## 所需技能
 
 - **xlsx**：用于读写CSV文件
-- **pdf**：用于从图片中OCR文字提取（处理图片输入时）
+- **paddleocr-doc-parsing**：用于从图片中OCR文字提取（处理图片输入时）

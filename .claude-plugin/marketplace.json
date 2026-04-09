@@ -115,7 +115,7 @@
       "skills": [
         "./atoms/skills/cdcu-mcu-requirements",
         "./atoms/skills/xlsx",
-        "./atoms/skills/pdf"
+        "./atoms/skills/paddleocr-doc-parsing"
       ],
       "hooks": [],
       "agents": [
