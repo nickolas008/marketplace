@@ -108,29 +108,19 @@
       }
     },
     {
-      "name": "nick-test",
-      "description": "nick-test description",
+      "name": "mcu requirement dev",
+      "description": "需求转换流程。用于将原始需求描述转换为标准化的CDCU MCU（中央域控制器微控制单元）系统需求。它遵循AUTOSAR架构标准，自动识别和处理嵌入式系统相关需求",
       "category": "development",
       "commands": [],
       "skills": [
-        "./atoms/skills/brainstorming",
-        "./atoms/skills/executing-plans",
-        "./atoms/skills/writing-plans",
-        "./atoms/skills/git-workspace-init",
+        "./atoms/skills/cdcu-mcu-requirements",
         "./atoms/skills/xlsx"
       ],
       "hooks": [],
       "agents": [
-        "./atoms/agents/superpowers-dev.md"
+        "./atoms/agents/cdcu-mcu-requirements-agent.md"
       ],
       "mcpServers": {
-        "claude-teams": {
-          "command": "uvx",
-          "args": [
-            "acpx-teams"
-          ],
-          "disabled": false
-        }
       }
     }
   ]
