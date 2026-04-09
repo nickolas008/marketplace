@@ -1,0 +1,23 @@
+{
+  "skill_name": "cdcu-mcu-requirements",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "我有一个CSV文件requirements.csv，里面有一列'需求描述'包含了一些关于CDCU的原始需求，请帮我转换成标准的CDCU MCU系统需求格式，填写到'系统需求'列中",
+      "expected_output": "处理CSV文件，将需求描述转换为标准化的CDCU MCU系统需求，包含前置条件、触发条件、执行输出等标准字段",
+      "files": ["test_requirements.csv"]
+    },
+    {
+      "id": 2,
+      "prompt": "这个Excel表格里有很多汽车控制系统的需求，帮我把涉及CDCU MCU的部分提取出来并规范化，需要区分MCU和SOC的职责",
+      "expected_output": "正确识别CDCU MCU相关需求，过滤SOC相关内容，生成规范化的系统需求文档",
+      "files": ["mixed_requirements.xlsx"]
+    },
+    {
+      "id": 3,
+      "prompt": "处理这个需求文件，把'当用户按下按钮时CDCU发送启动信号'这类描述转换成符合AUTOSAR架构的系统需求格式",
+      "expected_output": "将非正式的需求描述转换为包含信号名称、发送方式、触发条件等完整信息的系统需求",
+      "files": ["informal_requirements.csv"]
+    }
+  ]
+}
