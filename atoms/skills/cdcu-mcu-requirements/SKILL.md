@@ -1,119 +1,246 @@
 ---
 name: cdcu-mcu-requirements
-description: Convert raw requirements to CDCU MCU system requirements. Use this skill whenever users need to process requirement CSV files containing "需求描述" field to generate standardized "系统需求" for CDCU MCU embedded systems. Triggers include: CSV requirements processing for CDCU MCU, embedded system requirement standardization, AUTOSAR architecture requirements, CAN/LIN/UART signal processing requirements, converting informal requirements to formal system specifications.
+description: 将原始需求转换为CDCU MCU系统需求。当用户需要处理CSV文件或图片中的"需求描述"并生成标准化的CDCU MCU嵌入式系统"系统需求"时使用此技能。触发场景包括：CDCU MCU的CSV/图片需求处理、从需求图片中OCR文字提取、嵌入式系统需求标准化、AUTOSAR架构需求、CAN/LIN/UART/GPIO信号处理需求、将非正式需求转换为包含完整字段映射的正式MCU规范。
 ---
 
-# CDCU MCU Requirements Converter
+# CDCU MCU 需求转换器
 
-This skill processes raw requirements and converts them into standardized CDCU MCU system requirements following embedded system engineering best practices.
+您是一位经验丰富的嵌入式系统工程师，专门负责按照AUTOSAR架构原则将原始需求转换为标准化的CDCU MCU系统需求。
 
-## Overview
+## 角色与职责
 
-CDCU MCU (Center Domain Controller Unit Micro Control Unit) is responsible for:
-- Logic processing
-- Signal sending/receiving/forwarding
-- Communication via multiple protocols (CAN, LIN, UART, Ethernet, GPIO)
+CDCU MCU（中央域控制器微控制单元）负责逻辑处理、信号发送/接收/转发。您的任务是提取MCU相关内容并将其转换为结构化的系统需求。
 
-The MCU software uses standard AUTOSAR architecture with the following capabilities:
-- **CAN Communication**: 7 CAN channels (ICAN, TPCAN, BCAN, ECAN, CCAN, DCAN, LPCAN)
-- **LIN Communication**: 5 LIN channels as master (CLIN1-5)
-- **UART Communication**: Communication with display (CDCU SOC) via carservice interface
-- **Ethernet Communication**: Via internal Switch to other domain controllers
-- **GPIO Interface**: External signal reception and control execution
-- **Logic Processing**: Process received signals and send results
+## 功能1: CDCU MCU能力建模
 
-## Workflow
+CDCU MCU基于AUTOSAR架构，具备以下标准能力：
 
-### Step 1: Load and Process Input CSV
+### 1) 通信能力
+- **CAN通信**: ICAN / TPCAN / BCAN / ECAN / CCAN / DCAN / LPCAN
+- **LIN通信**: CLIN1 / CLIN2 / CLIN3 / CLIN4 / CLIN5 (MCU为Master)
+- **串口通信(UART)**: 通过carservice接口与大屏(CDCU SOC)通信
+- **以太网通信**: 通过内部Switch与其他域控制器通信
 
-Use the xlsx skill to read the input CSV file containing:
-- `需求描述` (requirement_description) column
-- `系统需求` (system_requirement) column (to be filled)
+### 2) IO能力
+- GPIO输入采集
+- GPIO输出控制
 
-### Step 2: Process Each Requirement
+### 3) 数据处理能力
+- 信号接收 / 发送 / 透传
+- 状态判断与逻辑处理
 
-For each requirement in the `需求描述` column:
+## 工作流程
 
-1. **Filter by Relevance**
-   - Extract only CDCU MCU-related requirements
-   - When "CDCU" is mentioned without specifying MCU/SOC, analyze context:
-     - Signal sending/receiving → CDCU MCU scope
-     - User/display operations → CDCU SOC scope
+### 步骤1: 加载并处理输入
 
-2. **Analyze Preconditions**
-   - If precondition is user/display operation → logic in SOC, MCU only sends signals
-   - If signal judgment needed without explicit SOC assignment → MCU logic
+#### 选项A: CSV文件处理
+使用xlsx技能读取包含以下列的输入CSV文件：
+- `需求描述` 列
+- `系统需求` 列（待填充）
 
-3. **Apply Standardized Format**
+#### 选项B: 图片处理
+使用pdf技能从需求图片中提取文字：
+1. 调用pdf技能进行OCR文字提取
+2. 解析提取的文字以识别需求描述
+3. 将文字作为CSV内容进行处理
 
-Generate system requirements with these mandatory fields:
+## 功能2: MCU需求识别与过滤
+
+### MCU职责判定规则（按优先级执行）
+
+#### 规则1：直接归属MCU
+以下内容必须属于MCU：
+- 明确提到CDCU MCU
+- 信号发送 / 接收 / 转发
+- CAN / LIN / UART / ETH通信
+- GPIO输入/输出
+- 信号触发执行
+- CDCU与其他控制器之间的通信交互
+
+#### 规则2：逻辑归属判断
+- 前置条件 = 用户操作 / 屏幕操作 / HMI操作 / 大屏操作 → 逻辑在SOC，MCU仅执行信号发送
+- 存在信号判断但未说明由谁处理 → 默认由MCU执行逻辑判断
+
+#### 规则3：CDCU模糊指代处理
+当需求仅写"CDCU"时：
+- 涉及通信 / 信号 / 控制 → MCU范围
+- 涉及UI / 显示 / 交互 → SOC范围（剔除）
+
+### 信息过滤规则
+
+**必须删除：**
+- UI显示逻辑
+- 页面交互细节
+- 与CDCU MCU无关的模块描述
+
+**仅保留：**
+- 信号
+- 条件
+- 控制行为
+- 通信行为
+
+### 信号处理规则
+- 中文信号名必须保留
+- 英文信号名必须完整保留（禁止截断）
+- 输出格式：英文信号名（中文信号名）
+
+## 功能3: 逻辑关系提取与标准化
+
+### 条件处理
+1. **条件拆解**：所有条件必须拆分为独立条目（1, 2, 3...）
+2. **逻辑符号标准化**：
+   - "且" → &&
+   - "或" → ||
+3. **逻辑保留原则**：不允许简化或重写逻辑，必须保持原始逻辑语义一致
+
+## 功能4: 结构化需求生成
+
+### 必填字段结构
+
+所有字段必须存在，每个需求后需要空行：
 
 ```
-前置条件/ Precondition: [Extract or "未定义"]
-触发条件/ Trigger condition: [Extract or "未定义"]
-执行输出/ Execution output: [Extract or "未定义"]
-退出条件/ Exit condition: [Extract or "未定义"]
-异常事件/ Exception event: [Extract or "未定义"]
-发送信号: [Signal name or "未定义"]
-发送方式: [周期发送/事件发送/触发发送 or "未定义"]
-发送时长: [Duration in ms/frames or "未定义"]
-发送后动作: [Post-send action or "未定义"]
-返回信号: [Return signal or "未定义"]
+前置条件 / Precondition: [提取内容或"未定义"]
+触发条件 / Trigger condition: [提取内容或"未定义"]
+执行输出 / Execution output: [提取内容或"未定义"]
+退出条件 / Exit condition: [提取内容或"未定义"]
+异常事件 / Exception event: [提取内容或"未定义"]
+发送信号 / Send signal: [信号名称或"未定义"]
+发送方式 / Send method: [周期/事件/触发或"未定义"]
+发送时长 / Send time: [时长ms/帧或"未定义"]
+发送后动作 / After-send operation: [保持/清零/恢复默认或"未定义"]
+返回信号 / Response signal: [返回信号或"未定义"]
 
-[Empty line after each requirement]
 ```
 
-### Step 3: Formatting Rules
+### 内容填充规则
+- 无内容字段 → "未定义"
+- 多条件 → 使用编号1, 2, 3...
+- 多逻辑 → 保留&& / ||
 
-1. **Multiple Conditions**: List as 1, 2, 3, 4...
-2. **Logical Operators**: Use && (AND), || (OR)
-3. **Undefined Fields**: Fill with "未定义"
-4. **Multiple Independent Events**: Create separate requirements
+### 信号相关规则
+完整的信号维度：
+- **信号名称**：如果存在中文描述，保留英文信号+中文描述
+- **发送方式**：周期发送 / 事件发送 / 触发发送
+- **发送时长**：ms / 帧 / 未定义
+- **发送后动作**：
+  - 持续发有效值
+  - 发送后回0
+  - 恢复默认值
+  - 恢复无效值
+- **通信方式**：如指定则保留CAN/LIN/UART/Ethernet/GPIO
 
-### Step 4: Generate Output CSV
+### 多需求拆分规则
 
-Use the xlsx skill to:
-1. Create a new CSV with all original columns
-2. Fill the `系统需求` column with generated requirements
-3. Save the processed CSV file
+满足以下情况时拆分：
+- 不同触发条件
+- 不同信号发送
+- 不同执行逻辑
 
-## Implementation Steps
-
-1. Read the input CSV file using xlsx skill
-2. Create a list to store processed requirements
-3. For each row:
-   - Extract the `需求描述` content
-   - Apply filtering and analysis rules
-   - Generate standardized system requirement
-   - Store in the corresponding `系统需求` field
-4. Write the complete CSV with filled requirements
-5. Return the file path to the user
-
-## Example Transformation
-
-**Input (需求描述)**:
+输出格式：
 ```
-当用户按下启动按钮且车速为0时，CDCU MCU发送启动信号给动力系统
+【需求1 XXX】
+[需求内容]
+
+【需求2 XXX】
+[需求内容]
+```
+其中XXX为该条需求的概述
+
+### 步骤3: 生成输出
+
+#### 对于CSV输入：
+使用xlsx技能：
+1. 创建包含所有原始列的新CSV
+2. 在`系统需求`列填充生成的需求
+3. 保存处理后的CSV文件
+
+#### 对于图片输入：
+1. 创建包含结果的新CSV文件
+2. 包含原始文本和转换后的需求
+3. 保存输出文件供用户下载
+
+## 实施步骤
+
+### 对于CSV文件：
+1. 使用xlsx技能读取输入CSV文件
+2. 使用4功能工作流处理每个需求
+3. 生成标准化系统需求
+4. 写入包含填充的`系统需求`列的输出CSV
+
+### 对于图片：
+1. 使用pdf技能通过OCR提取文字
+2. 解析并识别需求描述
+3. 使用4功能工作流处理
+4. 生成包含结果的输出CSV
+
+### 处理工作流：
+1. **功能1**：评估MCU能力
+2. **功能2**：识别和过滤MCU需求
+3. **功能3**：提取和标准化逻辑
+4. **功能4**：生成结构化需求
+
+## 示例转换
+
+### 示例1：带用户触发的简单信号
+**输入**："当用户按下启动按钮且车速为0时，CDCU MCU发送PowerOn_Signal启动信号给动力系统"
+
+**输出**：
+```
+【需求1 启动信号发送】
+
+前置条件 / Precondition: 用户按下启动按钮
+触发条件 / Trigger condition: 车速为0
+执行输出 / Execution output: 发送PowerOn_Signal（启动信号）给动力系统
+退出条件 / Exit condition: 未定义
+异常事件 / Exception event: 未定义
+发送信号 / Send signal: PowerOn_Signal（启动信号）
+发送方式 / Send method: 触发发送
+发送时长 / Send time: 未定义
+发送后动作 / After-send operation: 未定义
+返回信号 / Response signal: 未定义
+
 ```
 
-**Output (系统需求)**:
+### 示例2：带CAN通信的多条件
+**输入**："CDCU MCU检测到1.车门打开 2.车速>5km/h时，通过BCAN发送DoorWarning信号，持续3帧后恢复默认值"
+
+**输出**：
 ```
-前置条件/ Precondition: 用户按下启动按钮
-触发条件/ Trigger condition: 车速为0
-执行输出/ Execution output: 发送启动信号给动力系统
-退出条件/ Exit condition: 未定义
-异常事件/ Exception event: 未定义
-发送信号: 启动信号
-发送方式: 触发发送
-发送时长: 未定义
-发送后动作: 未定义
-返回信号: 未定义
+【需求1 车门警告信号】
+
+前置条件 / Precondition: 未定义
+触发条件 / Trigger condition: 1. 车门打开 && 2. 车速>5km/h
+执行输出 / Execution output: 通过BCAN发送DoorWarning信号
+退出条件 / Exit condition: 车门关闭 || 车速≤5km/h
+异常事件 / Exception event: 未定义
+发送信号 / Send signal: DoorWarning
+发送方式 / Send method: 事件发送
+发送时长 / Send time: 3帧
+发送后动作 / After-send operation: 恢复默认值
+返回信号 / Response signal: 未定义
+
 ```
 
-## Important Notes
+## 质量检查
 
-- Signal sending strategies are always within CDCU MCU scope
-- Logic processing location depends on preconditions
-- Each independent event generates a separate requirement
-- Maintain consistency with AUTOSAR architecture standards
-- Preserve all original CSV data while adding system requirements
+需求最终确定前，确保：
+1. ✓ 不包含非MCU信息
+2. ✓ 所有字段按规范填写
+3. ✓ 英文信号名称完整保留
+4. ✓ 保留存在的中文描述
+5. ✓ 多条件已编号且逻辑运算符（&&/||）已保留
+6. ✓ 逻辑清晰、结构完整
+7. ✓ 转换内容与原始需求语义匹配
+
+## 输出约束
+
+- 输出语言：中文（可包含英文信号名）
+- 严格遵循提供的格式和字段结构
+- 确保逻辑清晰和结构完整性
+- 与原始需求保持一致性
+
+## 所需技能
+
+- **xlsx**：用于读写CSV文件
+- **pdf**：用于从图片中OCR文字提取（处理图片输入时）

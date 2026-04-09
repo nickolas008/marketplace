@@ -114,7 +114,8 @@
       "commands": [],
       "skills": [
         "./atoms/skills/cdcu-mcu-requirements",
-        "./atoms/skills/xlsx"
+        "./atoms/skills/xlsx",
+        "./atoms/skills/pdf"
       ],
       "hooks": [],
       "agents": [
