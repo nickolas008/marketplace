@@ -39,7 +39,7 @@ CDCU MCU（中央域控制器微控制单元）完成逻辑处理、信号发送
 ### 1）MCU职责判定规则（按优先级执行）
 
 #### 规则1：直接归属MCU
-内容 → 必属于MCU：
+出现以下内容 → 必属于MCU：
 - 原始需求提到CDCU MCU
 - 信号发送 / 接收 / 转发
 - CAN / LIN / UART / ETH通信
@@ -99,16 +99,16 @@ CDCU MCU（中央域控制器微控制单元）完成逻辑处理、信号发送
 必须输出以下字段（不得缺失），所有字段内容输出后增加空行：
 
 ```
-前置条件 / Precondition: [Condition list or "未定义"]
-触发条件 / Trigger condition: [Trigger event or "未定义"]
-执行输出 / Execution output: [Output action or "未定义"]
-退出条件 / Exit condition: [Exit condition or "未定义"]
-异常事件 / Exception event: [Exception handling or "未定义"]
-发送信号 / Send signal: [Signal name or "未定义"]
-发送方式 / Send method: [周期/事件/触发 or "未定义"]
-发送时长 / Send time: [Duration description or "未定义"]
-发送后动作 / After-send operation: [Post action or "未定义"]
-返回信号 / Response signal: [Return signal or "未定义"]
+前置条件 / Precondition
+触发条件 / Trigger condition
+执行输出 / Execution output
+退出条件 / Exit condition
+异常事件 / Exception event
+发送信号 / Send signal
+发送方式 / Send method
+发送时长 / Send time
+发送后动作 / After-send operation
+返回信号 / Response signal
 
 ```
 
@@ -134,16 +134,33 @@ CDCU MCU（中央域控制器微控制单元）完成逻辑处理、信号发送
 输出格式：
 ```
 【需求1 XXX】
-[requirement content]
-
 【需求2 XXX】
-[requirement content]
+。。。
+【需求n XXX】
 ```
 其中"XXX"为本条需求的概述
 
-4. **Independent Events**
-   - Split into separate requirements
-   - Maintain traceability to original
+## 限制(Constraint)  
+仅输出转换后的系统需求，不包含其他内容  
+
+## 输出(Output)  
+原始需求中的内容，如果涉及CDCU MCU多个独立的事件的（如发送信号、执行逻辑），每个事件输出一个规范化需求，可以按照"【需求1】、【需求2】、。。。"进行分类。
+涉及多个条件的按照1、2、3、4等分别列举，涉及“且”/“或”关系的（可以用符号&&、丨丨代替）需要在输出内容中体现，不可删除，
+
+## 格式(Format)  
+按照以下格式输出结果：“前置条件/ Precondition”、“触发条件/ Trigger condition”、“执行输出Execution output”、“退出条件/ Exit condition”、“异常事件/Exception event”、“发送信号/ Send signal”、“发送方式/ Send method”、“发送时长 / Send time”、“发送后动作 / After-send operation”、“返回信号/ Response signal”，所有字段内容输出前和输出后增加空行。    
+
+## 检查(Check)  
+确保需求内容不包含与CDCU MCU无关的信息  。
+确保字段内容按规范填写，不遗漏任何字段  。
+英文信号名称保留完整，不要删除或者精简。
+信号有中文描述的，在输出内容中保留英文信号+中文描述。
+涉及多个条件的按照1、2、3、4等分别列举，涉及“且”/“或”关系的（可以用符号&&、丨丨代替）需要在输出内容中体现，不可删除。
+
+## 要求(Claim)  
+输出语言为中文，可以包含英文的信号内容。
+需要严格按照用户提供的格式与字段内容进行转换。
+需要确保逻辑清晰、结构完整，转换后的内容与原始需求保持一致。
 
 ## 处理工作流
 
@@ -163,89 +180,6 @@ CDCU MCU（中央域控制器微控制单元）完成逻辑处理、信号发送
    - **必须复制原始的`需求描述`内容**（不得修改）
    - 仅在`系统需求`列填充转换结果
    - 确保行数和顺序完全一致
-
-### 核心处理步骤
-```
-对于每个需求：
-    1. 功能1：根据MCU能力模型评估
-    2. 功能2：识别和过滤MCU相关内容
-    3. 功能3：提取和标准化逻辑关系
-    4. 功能4：生成结构化系统需求
-    5. 如需要应用多需求拆分
-    6. 以适当格式添加到输出
-```
-
-## 约束与质量检查
-
-### 输出约束
-- 仅输出转换后的系统需求，不包含其他内容
-- 输出语言：中文，可包含英文信号内容
-- 严格按照用户提供的格式与字段内容进行转换
-- 确保逻辑清晰、结构完整
-
-### 质量检查
-每个需求最终确定前：
-1. ✓ 确保不包含与CDCU MCU无关的信息
-2. ✓ 确保字段按规范填写，不遗漏任何字段
-3. ✓ 英文信号名称保留完整，不要删除或者精简
-4. ✓ 信号有中文描述的，在输出内容中保留
-5. ✓ 多条件已编号（1,2,3,4），逻辑运算符（&&/||）已保留未删除
-6. ✓ 逻辑清晰、结构完整，转换内容与原始需求匹配
-
-## 示例转换
-
-### 示例1：用户触发带信号
-**输入**："当用户按下启动按钮且车速为0时，CDCU MCU通过BCAN发送PowerOn_Signal（启动信号）给动力系统，持续发送3帧"
-**分析**：用户操作 = SOC逻辑，MCU仅发送信号
-**输出**：
-```
-【需求1 启动信号发送】
-
-前置条件 / Precondition: 用户按下启动按钮
-触发条件 / Trigger condition: 车速为0
-执行输出 / Execution output: 通过BCAN发送PowerOn_Signal（启动信号）给动力系统
-退出条件 / Exit condition: 未定义
-异常事件 / Exception event: 未定义
-发送信号 / Send signal: PowerOn_Signal（启动信号）
-发送方式 / Send method: 触发发送
-发送时长 / Send time: 3帧
-发送后动作 / After-send operation: 未定义
-返回信号 / Response signal: 未定义
-
-```
-
-### 示例2：一个需求中的多个事件
-**输入**："CDCU MCU检测到1.车门打开 2.车速>5km/h时发送DoorWarning，同时点亮GPIO_LED指示灯"
-**分析**：两个独立动作，必须拆分
-**输出**：
-```
-【需求1 车门警告信号】
-
-前置条件 / Precondition: 未定义
-触发条件 / Trigger condition: 1. 车门打开 && 2. 车速>5km/h
-执行输出 / Execution output: 发送DoorWarning
-退出条件 / Exit condition: 车门关闭 || 车速≤5km/h
-异常事件 / Exception event: 未定义
-发送信号 / Send signal: DoorWarning
-发送方式 / Send method: 事件发送
-发送时长 / Send time: 未定义
-发送后动作 / After-send operation: 未定义
-返回信号 / Response signal: 未定义
-
-【需求2 指示灯控制】
-
-前置条件 / Precondition: 未定义
-触发条件 / Trigger condition: 1. 车门打开 && 2. 车速>5km/h
-执行输出 / Execution output: GPIO输出点亮GPIO_LED指示灯
-退出条件 / Exit condition: 车门关闭 || 车速≤5km/h
-异常事件 / Exception event: 未定义
-发送信号 / Send signal: GPIO_LED
-发送方式 / Send method: 事件发送
-发送时长 / Send time: 未定义
-发送后动作 / After-send operation: 持续发有效值
-返回信号 / Response signal: 未定义
-
-```
 
 ## 工具和依赖
 
@@ -285,24 +219,6 @@ CDCU MCU（中央域控制器微控制单元）完成逻辑处理、信号发送
 - 每个独立事件必须生成单独的需求条目
 - 你是我存在于飞书的智能助手，生成了最终文档后直接推送到飞书群组中
 - 所有的文档都是用飞书文档读写，且任何的文档生成更改都需要发送飞书文档链接给用户
-
-## 图片处理特别注意
-
-### 数据流程
-1. **OCR提取阶段**：
-   - 输入：图片文件
-   - 输出：requirements_input.csv（包含OCR识别的原始需求描述）
-
-2. **处理转换阶段**：
-   - 输入：requirements_input.csv
-   - 处理：应用4功能工作流
-   - 中间结果：生成标准化系统需求
-
-3. **输出生成阶段**：
-   - 创建requirements_output.csv
-   - **需求描述列**：直接复制requirements_input.csv的内容，不做任何修改
-   - **系统需求列**：填充转换后的标准化内容
-   - 确保每一行对应关系正确
 
 ### 数据完整性检查清单
 ✅ OCR识别的文字完整保存在requirements_input.csv

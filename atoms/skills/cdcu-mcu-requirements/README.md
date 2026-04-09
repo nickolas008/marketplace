@@ -33,7 +33,7 @@
 用户: 请从这张图片中提取需求并转换为CDCU MCU系统需求
 ```
 
-技能会使用pdf skill进行OCR文字识别，然后处理提取的需求。
+技能会使用paddleocr-doc-parsing skill进行OCR文字识别，然后处理提取的需求。
 
 ### 3. 输出格式
 
@@ -49,57 +49,10 @@
 - 发送后动作 / After-send operation
 - 返回信号 / Response signal
 
-## 示例
-
-### 输入需求
-```
-当车速大于20km/h且用户按下ACC按钮时，CDCU MCU发送ACC激活信号到动力控制器
-```
-
-### 输出系统需求
-```
-【需求1 ACC激活信号】
-
-前置条件 / Precondition: 用户按下ACC按钮
-触发条件 / Trigger condition: 车速>20km/h
-执行输出 / Execution output: 发送ACC激活信号到动力控制器
-退出条件 / Exit condition: 未定义
-异常事件 / Exception event: 未定义
-发送信号 / Send signal: ACC激活信号
-发送方式 / Send method: 触发发送
-发送时长 / Send time: 未定义
-发送后动作 / After-send operation: 未定义
-返回信号 / Response signal: 未定义
-```
-
-## 处理规则（4大功能）
-
-### 功能1：MCU能力建模
-基于AUTOSAR架构的标准能力：
-- 通信能力：CAN（7路）、LIN（5路）、UART、以太网
-- IO能力：GPIO输入/输出
-- 数据处理：信号接收/发送/透传、逻辑处理
-
-### 功能2：需求识别与过滤
-**优先级规则**：
-1. 直接归属MCU：明确提到MCU、信号、通信协议
-2. 逻辑归属判断：用户操作→SOC逻辑，MCU执行信号发送
-3. CDCU模糊处理：通信/信号→MCU，UI/显示→SOC
-
-### 功能3：逻辑关系提取
-- 条件拆分为独立条目（1,2,3...）
-- 逻辑符号标准化：且→&&，或→||
-- 保持原始逻辑语义
-
-### 功能4：结构化生成
-- 10个必填字段，无内容填"未定义"
-- 多需求自动拆分并编号
-- 信号名称完整保留（英文+中文）
-
 ## 依赖
 
 - **xlsx skill**：用于读写CSV/Excel文件
-- **pdf skill**：用于从图片中提取文字（OCR功能）
+- **paddleocr-doc-parsing skill**：用于从图片中提取文字（OCR功能）
 - **Python环境**：运行处理脚本
 
 ## 文件结构
@@ -110,10 +63,6 @@ cdcu-mcu-requirements/
 ├── README.md             # 使用说明
 ├── scripts/
 │   └── process_requirements.py  # 处理脚本
-├── examples/
-│   └── sample_requirements.csv  # 示例文件
-└── evals/
-    └── evals.json        # 测试用例
 ```
 
 ## 相关Agent
